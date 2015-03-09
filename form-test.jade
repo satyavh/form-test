@@ -1,0 +1,59 @@
+body
+
+
+  .row
+    .col-sm-4
+      +loginButtons
+    .col-sm-6
+      +changePasswordForm
+    .col-sm-2
+
+
+
+template(name="changePasswordForm")
+  +formBlock(schema=schema action=action)
+    +passwordField(field="currentPassword")
+    +passwordField(field="newPassword")
+    +passwordField(field="confirmPassword")
+
+
+template(name="formBlock")
+  form
+    +UI.contentBlock data=data context=context
+
+    p
+      button.btn.btn-default(type="submit" disabled='{{#if isNull invalidCount success}}disabled{{/if}}') Submit
+      span
+        if loading
+          | Loading...
+        if invalid
+          | Can't submit! There are {{invalidCount}} invalid fields!
+        if failed
+          | There was a problem submitting the form!
+        if success
+          | Success! Form submitted (to nowhere)
+
+
+
+template(name="inputField")
+  .form-groupdiv(class="{{#unless and submitted success}}{{#unless valid}}has-success{{/unless}}{{/unless}}")
+    +bootstrapLabel
+    input.form-control.reactive-element(type="text", name="{{field}}", value="{{value}}")
+    +bootstrapErrorMsg
+
+
+template(name="passwordField")
+  .form-groupdiv(class="{{#unless success}}{{#if valid}}has-success{{/if}}{{/unless}}")
+
+    label.control-label
+      {{schema.label}}
+    span 
+      input.form-control.reactive-element(type="password", name="{{field}}", placeholder="{{schema.instructions}}", value="{{value}}")
+      unless success
+        if valid
+          span.glyphicon.glyphicon-ok(aria-hidden="true")       
+    p.help-block
+      if ../valid
+        | {{instructions}}
+      else
+        | {{errorMessage}}
